@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinKotsuMan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header class="hero-banner">
+            <div class="hero-left">
+                <div class="hero-title-main">KinKotsuMan</div>
+                <div class="hero-title-sub">エルゴ作業解析アプリ</div>
+                <div class="hero-desc">
+                    動画をアップロードして、どの時間帯でエルゴ負荷が発生しているかを確認します。
+                </div>
+            </div>
+            <div class="hero-right">
+                <img src="{{ url_for('static', filename='kinkotsuman.png') }}" alt="KinKotsuMan キャラクター"
+                    class="hero-character" onerror="this.style.display='none';">
+            </div>
+        </header>
+
+        {% if not model_exists %}
+        <div class="alert error">
+            models/pose_landmarker_full.task が見つかりません。
+        </div>
+        {% endif %}
+
+        <section class="card">
+            <h2>動画アップロード</h2>
+
+            <div id="dropZone" class="drop-zone">
+                <p>ここに動画をドラッグ＆ドロップ</p>
+                <p>または</p>
+                <label class="file-select">
+                    ファイルを選択
+                    <input type="file" id="fileInput" accept="video/*" hidden>
+                </label>
+            </div>
+
+            <div id="selectedFile" class="selected-file">未選択</div>
+
+            <button id="analyzeBtn" class="primary-btn" disabled>エルゴ解析</button>
+        </section>
+
+        <section class="card">
+            <h2>進捗</h2>
+            <div class="progress-wrap">
+                <div id="progressBar" class="progress-bar">0%</div>
+            </div>
+            <div id="progressMessage" class="progress-message">待機中</div>
+        </section>
+
+        <section id="resultSection" class="card hidden">
+            <h2>解析結果</h2>
+
+            <div class="summary-panel">
+                <h3>発生箇所レポート</h3>
+                <pre id="summaryText"></pre>
+            </div>
+
+            <div class="download-panel">
+                <a id="downloadVideo" class="download-link" href="#" download>動画をダウンロード</a>
+                <a id="downloadSummaryText" class="download-link" href="#" download>サマリーTXTをダウンロード</a>
+                <a id="downloadSummaryJson" class="download-link" href="#" download>サマリーJSONをダウンロード</a>
+                <a id="downloadVtt" class="download-link" href="#" download>字幕VTTをダウンロード</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+
+</html>
