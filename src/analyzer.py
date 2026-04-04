@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import shutil
 import subprocess
 from pathlib import Path
 from typing import Callable
@@ -189,32 +188,17 @@ class ErgoVideoAnalyzer:
         temp_input_path: Path,
         final_output_path: Path,
     ) -> Path:
-        ffmpeg_path = shutil.which("ffmpeg")
+        ffmpeg_path = Path(r"C:\Users\PJ\ffmpeg-8.1-essentials_build\bin\ffmpeg.exe")
 
-        if ffmpeg_path:
-            cmd = [
-                ffmpeg_path,
-                "-y",
-                "-i", str(temp_input_path),
-                "-c:v", "libx264",
-                "-pix_fmt", "yuv420p",
-                "-movflags", "+faststart",
-                str(final_output_path),
-            ]
-            try:
-                subprocess.run(
-                    cmd,
-                    check=True,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                )
-                try:
-                    temp_input_path.unlink()
-                except OSError:
-                    pass
-                return final_output_path
-            except Exception:
-                pass
+        if not ffmpeg_path.exists():
+            raise RuntimeError(
+                f"ffmpeg が見つかりません: {ffmpeg_path}"
+            )
+
+        if not temp_input_path.exists():
+            raise RuntimeError(
+                f"変換元動画が見つかりません: {temp_input_path}"
+            )
 
         if final_output_path.exists():
             try:
@@ -222,7 +206,39 @@ class ErgoVideoAnalyzer:
             except OSError:
                 pass
 
-        temp_input_path.replace(final_output_path)
+        cmd = [
+            str(ffmpeg_path),
+            "-y",
+            "-i", str(temp_input_path),
+            "-c:v", "libx264",
+            "-pix_fmt", "yuv420p",
+            "-movflags", "+faststart",
+            str(final_output_path),
+        ]
+
+        try:
+            subprocess.run(
+                cmd,
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                "ffmpeg によるブラウザ再生用動画の生成に失敗しました。"
+            ) from e
+        finally:
+            if temp_input_path.exists():
+                try:
+                    temp_input_path.unlink()
+                except OSError:
+                    pass
+
+        if not final_output_path.exists():
+            raise RuntimeError(
+                f"ブラウザ再生用動画の生成結果が見つかりません: {final_output_path}"
+            )
+
         return final_output_path
 
     def _draw_pose(self, frame, landmarks_px: dict[str, tuple[float, float]]) -> None:

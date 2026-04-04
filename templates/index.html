@@ -4,33 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KinKotsuMan</title>
+    <title>CHUPPY ELGO</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <header class="hero-banner">
-            <div class="hero-left">
-                <div class="hero-title-main">KinKotsuMan</div>
-                <div class="hero-title-sub">エルゴ作業解析アプリ</div>
-                <div class="hero-desc">
-                    動画をアップロードして、どの時間帯でエルゴ負荷が発生しているかを確認します。
-                </div>
-            </div>
-            <div class="hero-right">
-                <img src="{{ url_for('static', filename='kinkotsuman.png') }}" alt="KinKotsuMan キャラクター"
-                    class="hero-character" onerror="this.style.display='none';">
-            </div>
-        </header>
+    <header class="hero-banner">
+        <div class="hero-left-inline">
+            <img src="{{ url_for('static', filename='kinkotsuman.png') }}" alt="icon" class="hero-character-inline"
+                onerror="this.style.display='none';">
+            <div class="hero-title-main">🩻 CHUPPY ELGO</div>
+        </div>
+    </header>
 
+    <div class="container">
         {% if not model_exists %}
         <div class="alert error">
             models/pose_landmarker_full.task が見つかりません。
         </div>
         {% endif %}
 
-        <section class="card">
+        <section id="uploadSection" class="card">
             <h2>動画アップロード</h2>
 
             <div id="dropZone" class="drop-zone">
@@ -47,7 +41,7 @@
             <button id="analyzeBtn" class="primary-btn" disabled>エルゴ解析</button>
         </section>
 
-        <section class="card">
+        <section id="progressSection" class="card">
             <h2>進捗</h2>
             <div class="progress-wrap">
                 <div id="progressBar" class="progress-bar">0%</div>
@@ -56,20 +50,33 @@
         </section>
 
         <section id="resultSection" class="card hidden">
-            <h2>解析結果</h2>
+            <div class="result-layout">
+                <div class="video-panel">
+                    <h2>解析動画</h2>
+                    <video id="resultVideo" class="result-video" controls autoplay muted playsinline></video>
 
-            <div class="summary-panel">
-                <h3>発生箇所レポート</h3>
-                <pre id="summaryText"></pre>
-            </div>
+                    <div class="download-panel vertical compact-links">
+                        <a id="downloadVideo" class="download-link compact" href="#" download>⬇️解析動画ダウンロード</a>
+                        <a id="downloadSummaryText" class="download-link compact" href="#"
+                            download>⬇️解析サマリー(TXT)ダウンロード</a>
+                        <a id="downloadSummaryJson" class="download-link compact" href="#"
+                            download>⬇️解析サマリー(JSON)ダウンロード</a>
+                        <a id="downloadVtt" class="download-link compact" href="#" download>⬇️字幕(VTT)ダウンロード</a>
+                    </div>
+                </div>
 
-            <div class="download-panel">
-                <a id="downloadVideo" class="download-link" href="#" download>動画をダウンロード</a>
-                <a id="downloadSummaryText" class="download-link" href="#" download>サマリーTXTをダウンロード</a>
-                <a id="downloadSummaryJson" class="download-link" href="#" download>サマリーJSONをダウンロード</a>
-                <a id="downloadVtt" class="download-link" href="#" download>字幕VTTをダウンロード</a>
+                <div class="analysis-panel">
+                    <h2>解析結果</h2>
+                    <div id="summaryStats" class="summary-stats"></div>
+                    <div class="graph-section">
+                        <div class="graph-title">分析グラフ</div>
+                        <div id="graphsWrap" class="graphs-wrap"></div>
+                    </div>
+                    <div id="reportCards" class="report-cards compact"></div>
+                </div>
             </div>
-        </section>
+    </div>
+    </section>
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
