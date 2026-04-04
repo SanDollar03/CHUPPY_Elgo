@@ -1,35 +1,26 @@
+フォルダ構成
 elgo_app/
-│
 ├─ app.py
 ├─ requirements.txt
-│
 ├─ models/
 │   └─ pose_landmarker_full.task
-│
 ├─ input_videos/
-│   └─ (アップロードされた動画が保存される)
-│
+│   └─ (アップロード動画)
 ├─ output/
 │   └─ <job_id>/
-│       ├─ *_frame_results.csv
 │       ├─ *_summary.json
 │       ├─ *_summary_report.txt
-│       ├─ *_overlay.mp4         ← ダウンロード用動画
-│       └─ *_summary.vtt         ← 字幕ファイル
-│
+│       ├─ *_overlay.mp4
+│       └─ *_summary.vtt
 ├─ jobs/
-│   └─ <job_id>.json             ← 進捗管理
-│
+│   └─ <job_id>.json
 ├─ static/
 │   ├─ app.js
 │   ├─ style.css
-│   └─ kinkotsuman.png           ← キャラ画像（任意）
-│
+│   └─ kinkotsuman.png
 ├─ templates/
 │   └─ index.html
-│
 └─ src/
-    ├─ __init__.py
     ├─ analyzer.py
     ├─ ergo_rules.py
     ├─ geometry.py

@@ -1,7 +1,5 @@
 @echo off
 cd /d C:\Users\PJ\python\test\elgo_app
-echo add venv...
-call .\Scripts\activate.bat
-echo Flask start...
-python app.py
+.\Scripts\python.exe -m pip install -r requirements.txt
+.\Scripts\python.exe app.py
 pause
