@@ -1,0 +1,104 @@
+以下は **ffmpeg-8.1-essentials_build.zip を使った正しい導入手順（Windows）**です。
+最短で動かすことを前提に、余計な分岐は省いています。
+
+手順（確実に通るやり方）
+① 解凍
+
+ダウンロードした zip を解凍します。
+
+例：
+
+C:\tools\ffmpeg\
+
+解凍後の構造はこうなります：
+
+C:\tools\ffmpeg\
+ └─ ffmpeg-8.1-essentials_build\
+     ├─ bin\
+     │   ├─ ffmpeg.exe
+     │   ├─ ffprobe.exe
+     │   └─ ffplay.exe
+② PATH を通す（重要）
+追加するパス
+C:\tools\ffmpeg\ffmpeg-8.1-essentials_build\bin
+手順
+Windowsキー → 「環境変数」と検索
+「システム環境変数の編集」を開く
+「環境変数」クリック
+「Path」を選択 → 編集
+「新規」→ 上記パスを貼り付け
+OK → OK → OK
+③ ターミナル再起動（必須）
+
+ここを忘れると99%ハマります。
+
+PowerShell / コマンドプロンプト
+VS Code のターミナル
+
+全部閉じて再度開く
+
+④ 動作確認
+ffmpeg -version
+
+これが出ればOK
+
+例：
+
+ffmpeg version 8.1 ...
+⑤ アプリ側確認
+
+Flaskを再起動：
+
+python app.py
+
+その後：
+
+動画アップロード
+解析実行
+完了
+
+→ 動画が再生される
+
+よくあるミス（ここ重要）
+❌ binまで入れてない
+C:\tools\ffmpeg\ffmpeg-8.1-essentials_build
+
+→ NG
+
+必ず：
+
+...\bin
+❌ ターミナル再起動してない
+
+→ PATHが反映されない
+
+❌ VS Codeだけ古いまま
+
+→ VS Code再起動必要
+
+❌ Pythonは別環境（WSL / 仮想環境）
+
+→ その環境で ffmpeg が見える必要あり
+
+トラブルシュート
+ffmpegが見つからない場合
+where ffmpeg
+
+何も出なければ PATHミス
+
+強制指定（最終手段）
+
+どうしてもPATHが通らない場合：
+
+analyzer.py のここを変更
+
+ffmpeg_path = "C:\\tools\\ffmpeg\\ffmpeg-8.1-essentials_build\\bin\\ffmpeg.exe"
+結論
+
+今回の不具合はUIではなく：
+
+「mp4は生成されているが、ブラウザで再生できない形式」
+
+だったため、
+
+→ ffmpeg導入で完全に解消します
