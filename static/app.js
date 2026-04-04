@@ -12,6 +12,7 @@ const resultVideo = document.getElementById("resultVideo");
 const summaryStats = document.getElementById("summaryStats");
 const reportCards = document.getElementById("reportCards");
 const graphsWrap = document.getElementById("graphsWrap");
+const aiComment = document.getElementById("aiComment");
 
 const downloadVideo = document.getElementById("downloadVideo");
 const downloadSummaryText = document.getElementById("downloadSummaryText");
@@ -26,7 +27,7 @@ const LABEL_META = {
     overhead_work: { ja: "頭上作業", statClass: "stat-overhead_work", cardClass: "risk-overhead_work", color: "#8b5cf6" },
     squatting: { ja: "しゃがみ", statClass: "stat-squatting", cardClass: "risk-squatting", color: "#06b6d4" },
     one_arm_overextension: { ja: "片腕過伸展", statClass: "stat-one_arm_overextension", cardClass: "risk-one_arm_overextension", color: "#ef4444" },
-    same_posture_continuation: { ja: "同一姿勢継続", statClass: "stat-same_posture_continuation", cardClass: "risk-same_posture_continuation", color: "#eab308" },
+    same_posture_continuation: { ja: "同一姿勢継続", statClass: "stat-same_posture_continuation", color: "#eab308", cardClass: "risk-same_posture_continuation" },
 };
 
 function setProgress(value, message = "") {
@@ -84,6 +85,10 @@ function escapeHtml(value) {
         .replace(/'/g, "&#39;");
 }
 
+function renderMultilineText(value) {
+    return escapeHtml(value).replace(/\n/g, "<br>");
+}
+
 function formatSec(sec) {
     return `${Number(sec || 0).toFixed(2)}秒`;
 }
@@ -96,6 +101,9 @@ function clearResultViews() {
     summaryStats.innerHTML = "";
     reportCards.innerHTML = "";
     graphsWrap.innerHTML = "";
+    if (aiComment) {
+        aiComment.textContent = "";
+    }
 }
 
 function totalDurationFromSummary(summary) {
@@ -140,10 +148,11 @@ function buildCompactCards(summary) {
             label: seg.label,
             labelJa: seg.label_ja,
             startSec: Number(seg.start_sec || 0),
+            endSec: Number(seg.end_sec || 0),
             durationSec: Number(seg.duration_sec || 0),
             desc: seg.label === "bending" && seg.max_trunk_angle != null
-                ? `最大前傾角 ${Number(seg.max_trunk_angle).toFixed(1)}度`
-                : `継続 ${Number(seg.duration_sec || 0).toFixed(2)}秒`
+                ? `${Number(seg.start_sec || 0).toFixed(2)}s〜${Number(seg.end_sec || 0).toFixed(2)}s / 最大前傾角 ${Number(seg.max_trunk_angle).toFixed(1)}度`
+                : `${Number(seg.start_sec || 0).toFixed(2)}s〜${Number(seg.end_sec || 0).toFixed(2)}s / 継続 ${Number(seg.duration_sec || 0).toFixed(2)}秒`
         });
     }
 
@@ -152,8 +161,9 @@ function buildCompactCards(summary) {
             label: "same_posture_continuation",
             labelJa: seg.label_ja || "同一姿勢継続",
             startSec: Number(seg.start_sec || 0),
+            endSec: Number(seg.end_sec || 0),
             durationSec: Number(seg.duration_sec || 0),
-            desc: `継続 ${Number(seg.duration_sec || 0).toFixed(2)}秒`
+            desc: `${Number(seg.start_sec || 0).toFixed(2)}s〜${Number(seg.end_sec || 0).toFixed(2)}s / 継続 ${Number(seg.duration_sec || 0).toFixed(2)}秒`
         });
     }
 
@@ -422,6 +432,10 @@ analyzeBtn.addEventListener("click", async () => {
     resetResultVideo();
     setProgress(0, "アップロード中...");
 
+    if (aiComment) {
+        aiComment.textContent = "AIコメントを準備しています。";
+    }
+
     const formData = new FormData();
     formData.append("file", selected);
 
@@ -482,6 +496,12 @@ async function renderResult(result) {
     downloadSummaryText.href = result.report_txt_url || "#";
     downloadSummaryJson.href = result.summary_json_url || "#";
     downloadVtt.href = result.download_vtt_url || "#";
+
+    if (aiComment) {
+        aiComment.innerHTML = renderMultilineText(
+            result.ai_comment || "AIコメントはありません。"
+        );
+    }
 
     if (result.overlay_video_url) {
         resultVideo.src = result.overlay_video_url;

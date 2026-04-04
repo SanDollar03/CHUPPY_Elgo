@@ -144,6 +144,29 @@ h2 {
     max-height: 72vh;
 }
 
+.ai-comment-section {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+}
+
+.ai-comment-title {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #1e3a8a;
+}
+
+.ai-comment-body {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #1f2937;
+    white-space: normal;
+    word-break: break-word;
+}
+
 .download-panel.vertical {
     display: flex;
     flex-direction: column;
@@ -281,7 +304,6 @@ h2 {
     cursor: pointer;
 }
 
-/* 時系列: 下段でコンパクト表示 */
 .report-cards {
     display: flex;
     flex-direction: column;
