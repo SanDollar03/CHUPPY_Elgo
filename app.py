@@ -319,7 +319,10 @@ def serve_result_file(job_id: str, kind: str):
     if kind == "vtt":
         return send_file(file_path, mimetype="text/vtt", as_attachment=False)
 
-    return send_from_directory(file_path.parent, file_path.name, as_attachment=False)
+    if kind == "overlay_video":
+        return send_file(file_path, mimetype="video/mp4", as_attachment=False)
+
+    return send_file(file_path, as_attachment=False)
 
 
 @app.route("/download/<job_id>/<kind>", methods=["GET"])
